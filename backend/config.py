@@ -1,0 +1,12 @@
+MYSQL_HOST = 'localhost'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'meet_0118'
+MYSQL_DB = 'aura_gifting'
+RAZORPAY_KEY_ID = "rzp_test_Su58Ho24FBCS09"
+RAZORPAY_KEY_SECRET = "WXvpUbpHnpq54bT0XXAWtpD3"
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USERNAME = 'satvapatel30@gmail.com'
+MAIL_PASSWORD = 'fzhq aohx gcuo vrjp'
+MAIL_USE_TLS = True
+MAIL_USE_SSL = False
