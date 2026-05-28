@@ -46,9 +46,9 @@ function EditProduct() {
       try {
 
         const response =
-          await axios.get(
-            "http://127.0.0.1:5000/api/products"
-          );
+  await axios.get(
+    `${process.env.REACT_APP_API_URL}/api/products`
+  );
 
         const singleProduct =
           response.data.find(
@@ -113,11 +113,11 @@ function EditProduct() {
 
       await axios.put(
 
-        `http://127.0.0.1:5000/api/update-product/${id}`,
+  `${process.env.REACT_APP_API_URL}/api/update-product/${id}`,
 
-        productData
+  productData
 
-      );
+);
 
       alert(
         "Product Updated Successfully"

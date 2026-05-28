@@ -2319,3 +2319,122 @@ footer{
 
   font-weight:700;
 }
+
+/* =========================
+   MOBILE NAVBAR FIX
+========================= */
+
+@media(max-width:768px){
+
+  /* NAVBAR */
+
+  .navbar{
+
+    padding:18px 20px;
+
+    flex-direction:column;
+
+    gap:20px;
+  }
+
+  /* LOGO */
+
+  .logo-container{
+
+    justify-content:center;
+  }
+
+  .navbar-logo{
+
+    width:50px;
+
+    height:50px;
+  }
+
+  .logo-text{
+
+    font-size:2.2rem;
+  }
+
+  /* NAV LINKS */
+
+  .nav-links{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:35px;
+
+    flex-wrap:wrap;
+  }
+
+  .nav-links a{
+
+    font-size:1.1rem;
+
+    font-weight:600;
+  }
+
+  /* RIGHT SECTION */
+
+  .nav-right{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:20px;
+
+    width:100%;
+  }
+
+  /* LOGIN BUTTON */
+
+  .login-btn{
+
+    padding:14px 30px;
+
+    font-size:1rem;
+
+    border-radius:16px;
+  }
+
+  /* CART ICON */
+
+  .cart-icon{
+
+    font-size:2rem;
+  }
+
+  /* HERO */
+
+  .hero{
+
+    padding:140px 20px 80px;
+  }
+
+  .hero-content h1{
+
+    font-size:4rem;
+
+    line-height:1.2;
+  }
+
+  .hero-content p{
+
+    font-size:1.2rem;
+  }
+
+  .cta-button{
+
+    width:100%;
+
+    max-width:320px;
+  }
+
+}

@@ -80,16 +80,15 @@ function Login() {
 
     try {
 
-      const response =
-        await axios.post(
+      const response = await axios.post(
 
-          "http://127.0.0.1:5000/api/login",
+  `${process.env.REACT_APP_API_URL}/api/login`,
 
-          loginData
+  loginData
 
-        );
+);
 
-      alert(response.data.message);
+alert(response.data.message);
 
       // SAVE USER
 
@@ -131,16 +130,15 @@ function Login() {
 
     try {
 
-      const response =
-        await axios.post(
+      const response = await axios.post(
 
-          "http://127.0.0.1:5000/api/register",
+  `${process.env.REACT_APP_API_URL}/api/register`,
 
-          registerData
+ registerData
 
-        );
+);
 
-      alert(response.data.message);
+alert(response.data.message);
 
       // SWITCH TO LOGIN
 

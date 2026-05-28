@@ -20,9 +20,9 @@ function ManageProducts() {
     try {
 
       const response =
-        await axios.get(
-          "http://127.0.0.1:5000/api/products"
-        );
+  await axios.get(
+    `${process.env.REACT_APP_API_URL}/api/products`
+  );
 
       setProducts(response.data);
 
@@ -58,9 +58,9 @@ function ManageProducts() {
 
       await axios.delete(
 
-        `http://127.0.0.1:5000/api/delete-product/${id}`
+  `${process.env.REACT_APP_API_URL}/api/delete-product/${id}`
 
-      );
+);
 
       alert(
         "Product Deleted"

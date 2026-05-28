@@ -21,10 +21,9 @@ function Shop() {
 
     try {
 
-      const response =
-        await axios.get(
-          "http://127.0.0.1:5000/api/products"
-        );
+      const response = await axios.get(
+  `${process.env.REACT_APP_API_URL}/api/products`
+);
 
       setProducts(response.data);
 

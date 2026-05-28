@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 
-import logo from "../assets/logo.jpg";
-
 import {
   FaShoppingCart,
-  FaSignInAlt,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaSignInAlt
 } from "react-icons/fa";
+
+import logo from "../assets/logo.jpg";
+
+import "../styles/home.css";
 
 function Navbar() {
 
@@ -16,7 +18,7 @@ function Navbar() {
     localStorage.getItem("user")
   );
 
-  // LOGOUT FUNCTION
+  // LOGOUT
 
   const handleLogout = () => {
 
@@ -34,22 +36,29 @@ function Navbar() {
 
       <div className="logo-container">
 
-  <img
-    src={logo}
-    alt="Aura Gifting"
-    className="navbar-logo"
-  />
+        <Link
+          to="/"
+          className="logo-link"
+        >
 
-  <h1 className="logo-text">
+          <img
+            src={logo}
+            alt="Aura Gifting"
+            className="navbar-logo"
+          />
 
-    Aura Gifting
+        </Link>
 
-  </h1>
+        <h1 className="logo-text">
 
-</div>
+          Aura Gifting
+
+        </h1>
+
+      </div>
 
 
-      {/* CENTER LINKS */}
+      {/* NAV LINKS */}
 
       <div className="nav-links">
 
@@ -65,19 +74,12 @@ function Navbar() {
           Contact
         </Link>
 
-
       </div>
 
 
       {/* RIGHT SIDE */}
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px"
-        }}
-      >
+      <div className="nav-right">
 
         {
 
@@ -90,9 +92,7 @@ function Navbar() {
 
               <FaSignOutAlt />
 
-              <span>
-                Logout
-              </span>
+              Logout
 
             </button>
 
@@ -105,26 +105,22 @@ function Navbar() {
 
               <FaSignInAlt />
 
-              <span>
-                Login
-              </span>
+              Login
 
             </Link>
 
           )
 
         }
-<Link to="/cart">
 
-  <FaShoppingCart
-    style={{
-      fontSize: "28px",
-      color: "#333",
-      cursor: "pointer"
-    }}
-  />
+        <Link to="/cart">
 
-</Link>
+          <FaShoppingCart
+            className="cart-icon"
+          />
+
+        </Link>
+
       </div>
 
     </nav>

@@ -43,8 +43,8 @@ function ProductDetails() {
       try {
 
         const response = await axios.get(
-          "http://127.0.0.1:5000/api/products"
-        );
+  `${process.env.REACT_APP_API_URL}/api/products`
+);
 
         const foundProduct =
           response.data.find(
@@ -66,8 +66,8 @@ function ProductDetails() {
       try {
 
         const response = await axios.get(
-          `http://127.0.0.1:5000/api/reviews/${id}`
-        );
+  `${process.env.REACT_APP_API_URL}/api/reviews/${id}`
+);
 
         setReviews(response.data);
 
@@ -101,7 +101,7 @@ function ProductDetails() {
     try {
 
       const response = await axios.post(
-        "http://127.0.0.1:5000/api/add-review",
+        `${process.env.REACT_APP_API_URL}/api/add-review`,
         {
           productId: product.id,
           userName: user.name,
@@ -114,8 +114,8 @@ function ProductDetails() {
 
       // Refresh Reviews
       const reviewResponse = await axios.get(
-        `http://127.0.0.1:5000/api/reviews/${id}`
-      );
+  `${process.env.REACT_APP_API_URL}/api/reviews/${id}`
+);
 
       setReviews(reviewResponse.data);
 

@@ -44,11 +44,11 @@ function AddProduct() {
 
       await axios.post(
 
-        "http://127.0.0.1:5000/api/add-product",
+  `${process.env.REACT_APP_API_URL}/api/add-product`,
 
-        productData
+  productData
 
-      );
+);
 
       alert(
         "Product Added Successfully"
