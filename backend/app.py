@@ -150,57 +150,37 @@ def register():
 @app.route('/api/login', methods=['POST'])
 def login():
 
-    try:
+    data = request.get_json()
 
-        data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
 
-        email = data['email']
-        password = data['password']
+    cursor = mysql.connection.cursor(dictionary=True)
 
-        cursor = mysql.connection.cursor()
+    cursor.execute(
+        "SELECT * FROM users WHERE email=%s",
+        (email,)
+    )
 
-        query = """
-        SELECT * FROM users
-        WHERE email = %s
-        """
+    user = cursor.fetchone()
 
-        cursor.execute(query, (email,))
+    if user:
 
-        user = cursor.fetchone()
+        if user['password'] == password:
 
-        cursor.close()
+            return jsonify({
+                "message": "Login Successful",
+                "user": {
+                    "id": user['id'],
+                    "name": user['name'],
+                    "email": user['email'],
+                    "role": user['role']
+                }
+            })
 
-        if user:
-
-            stored_password = user[3].encode('utf-8')
-
-            password_match = bcrypt.checkpw(
-                password.encode('utf-8'),
-                stored_password
-            )
-
-            if password_match:
-
-                return jsonify({
-                    "message": "Login Successful",
-                    "user": {
-                        "id": user[0],
-                        "name": user[1],
-                        "email": user[2],
-                        "role": user[4]
-                    }
-                })
-
-        return jsonify({
-            "message": "Invalid Email or Password"
-        }), 401
-
-    except Exception as e:
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
+    return jsonify({
+        "message": "Invalid Email or Password"
+    }), 401
 
 # ---------------------------------------------------
 # Razorpay Create Order API
