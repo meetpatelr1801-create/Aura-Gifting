@@ -13,6 +13,8 @@ import EditProduct from "./pages/EditProduct";
 import MyOrders from "./pages/MyOrders";
 import AdminRoute from "./components/AdminRoute";
 import Wishlist from "./pages/Wishlist";
+import Shop from "./pages/Shop";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={
           <AdminRoute>
             <AdminDashboard />

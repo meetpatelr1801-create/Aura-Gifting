@@ -1,24 +1,39 @@
 import { useState } from "react";
+
 import axios from "axios";
 
 import Navbar from "../components/Navbar";
 
+import "../styles/home.css";
+
 function AddProduct() {
 
-  const [product, setProduct] = useState({
-    name: "",
-    price: "",
-    category: "",
-    description: "",
-    imageFile: null
-  });
+  const [productData, setProductData] =
+    useState({
+
+      name: "",
+
+      price: "",
+
+      image: "",
+
+      category: "",
+
+      description: ""
+
+    });
 
   const handleChange = (e) => {
 
-    setProduct({
-      ...product,
-      [e.target.name]: e.target.value
+    setProductData({
+
+      ...productData,
+
+      [e.target.name]:
+        e.target.value
+
     });
+
   };
 
   const handleSubmit = async (e) => {
@@ -27,61 +42,43 @@ function AddProduct() {
 
     try {
 
-      // Upload Image
-      const formData = new FormData();
+      await axios.post(
 
-      formData.append(
-        "image",
-        product.imageFile
-      );
-
-      const uploadResponse = await axios.post(
-        "http://127.0.0.1:5000/api/upload-image",
-        formData
-      );
-
-      const imageUrl =
-        uploadResponse.data.imageUrl;
-
-      // Product Data
-      const productData = {
-        name: product.name,
-        price: product.price,
-        image: imageUrl,
-        category: product.category,
-        description: product.description
-      };
-
-      // Save Product
-      const response = await axios.post(
         "http://127.0.0.1:5000/api/add-product",
+
         productData
+
       );
 
-      alert(response.data.message);
+      alert(
+        "Product Added Successfully"
+      );
+
+      window.location.reload();
 
     } catch (error) {
 
-      console.log(error);
-
-      alert("Failed To Add Product");
+      alert("Add Product Failed");
 
     }
   };
 
   return (
+
     <div>
 
       <Navbar />
 
-      <div className="form-container">
+      <div className="admin-form-page">
 
         <form
-          className="form-box"
+          className="admin-form"
           onSubmit={handleSubmit}
         >
 
-          <h1>Add Product</h1>
+          <h1>
+            Add Product
+          </h1>
 
           <input
             type="text"
@@ -100,13 +97,10 @@ function AddProduct() {
           />
 
           <input
-            type="file"
-            onChange={(e) =>
-              setProduct({
-                ...product,
-                imageFile: e.target.files[0]
-              })
-            }
+            type="text"
+            name="image"
+            placeholder="Image URL"
+            onChange={handleChange}
             required
           />
 
@@ -120,17 +114,15 @@ function AddProduct() {
 
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder="Product Description"
             onChange={handleChange}
-            style={{
-              padding: "15px",
-              borderRadius: "10px",
-              border: "1px solid #ddd"
-            }}
-          />
+            required
+          ></textarea>
 
           <button type="submit">
+
             Add Product
+
           </button>
 
         </form>
@@ -138,6 +130,7 @@ function AddProduct() {
       </div>
 
     </div>
+
   );
 }
 

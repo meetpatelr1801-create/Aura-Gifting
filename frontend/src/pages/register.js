@@ -1,79 +1,192 @@
 import { useState } from "react";
+
 import axios from "axios";
-import Navbar from "../components/Navbar";
+
+import {
+  FaUserPlus,
+  FaTimes
+} from "react-icons/fa";
+
+import { Link } from "react-router-dom";
+
 import "../styles/home.css";
 
 function Register() {
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
+  const [formData, setFormData] =
+    useState({
+
+      username: "",
+
+      name: "",
+
+      email: "",
+
+      password: ""
+
+    });
+
+  // HANDLE INPUT
 
   const handleChange = (e) => {
+
     setFormData({
+
       ...formData,
-      [e.target.name]: e.target.value
+
+      [e.target.name]:
+        e.target.value
+
     });
+
   };
 
+  // REGISTER
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     try {
 
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/register",
-        formData
+      const response =
+        await axios.post(
+
+          "http://127.0.0.1:5000/api/register",
+
+          formData
+
+        );
+
+      alert(
+        response.data.message
       );
 
-      alert(response.data.message);
+      // REDIRECT TO LOGIN
+
+      window.location.href =
+        "/login";
 
     } catch (error) {
 
-      alert("Registration Failed");
+      alert(
+        "Registration Failed"
+      );
 
     }
   };
 
   return (
-    <div>
 
-      <Navbar />
+    <div className="login-page">
 
-      <div className="form-container">
+      <div className="login-modal">
 
-        <form className="form-box" onSubmit={handleSubmit}>
+        {/* CLOSE */}
 
-          <h1>Register</h1>
+        <Link
+          to="/"
+          className="close-btn"
+        >
+
+          <FaTimes />
+
+        </Link>
+
+
+        {/* TABS */}
+
+        <div className="login-tabs">
+
+          <Link
+            to="/login"
+            className="tab-link"
+          >
+
+            Login
+
+          </Link>
+
+          <button className="active-tab">
+
+            Register
+
+          </button>
+
+        </div>
+
+
+        {/* FORM */}
+
+        <form onSubmit={handleSubmit}>
+
+          {/* USERNAME */}
+
+          <label>
+            Username
+          </label>
+
+          <input
+            type="text"
+            name="username"
+            placeholder="Choose a username"
+            onChange={handleChange}
+            required
+          />
+
+          {/* FULL NAME */}
+
+          <label>
+            Full Name
+          </label>
 
           <input
             type="text"
             name="name"
-            placeholder="Enter Name"
+            placeholder="Your full name"
             onChange={handleChange}
             required
           />
+
+          {/* EMAIL */}
+
+          <label>
+            Email
+          </label>
 
           <input
             type="email"
             name="email"
-            placeholder="Enter Email"
+            placeholder="your@email.com"
             onChange={handleChange}
             required
           />
+
+          {/* PASSWORD */}
+
+          <label>
+            Password
+          </label>
 
           <input
             type="password"
             name="password"
-            placeholder="Enter Password"
+            placeholder="Create a password"
             onChange={handleChange}
             required
           />
 
-          <button type="submit">
+          {/* BUTTON */}
+
+          <button
+            type="submit"
+            className="luxury-login-btn"
+          >
+
+            <FaUserPlus />
+
             Register
+
           </button>
 
         </form>
@@ -81,6 +194,7 @@ function Register() {
       </div>
 
     </div>
+
   );
 }
 

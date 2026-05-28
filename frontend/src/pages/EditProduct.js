@@ -1,10 +1,19 @@
-import { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback
+} from "react";
 
 import axios from "axios";
 
-import { useParams, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  useNavigate
+} from "react-router-dom";
 
 import Navbar from "../components/Navbar";
+
+import "../styles/home.css";
 
 function EditProduct() {
 
@@ -12,49 +21,89 @@ function EditProduct() {
 
   const navigate = useNavigate();
 
-  const [product, setProduct] = useState({
-    name: "",
-    price: "",
-    image: "",
-    category: "",
-    description: ""
-  });
+  const [productData, setProductData] =
+    useState({
 
-  // Fetch Product
-  const fetchProduct = async () => {
+      name: "",
 
-    try {
+      price: "",
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/products"
-      );
+      image: "",
 
-      const foundProduct = response.data.find(
-        (item) => item.id === parseInt(id)
-      );
+      category: "",
 
-      setProduct(foundProduct);
+      description: ""
 
-    } catch (error) {
+    });
 
-      console.log(error);
+  // ===================================
+  // FETCH PRODUCT
+  // ===================================
 
-    }
-  };
+  const fetchProduct = useCallback(
+    async () => {
+
+      try {
+
+        const response =
+          await axios.get(
+            "http://127.0.0.1:5000/api/products"
+          );
+
+        const singleProduct =
+          response.data.find(
+            (item) =>
+              item.id === parseInt(id)
+          );
+
+        if (singleProduct) {
+
+          setProductData(singleProduct);
+
+        }
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    },
+
+    [id]
+
+  );
+
+  // ===================================
+  // USE EFFECT
+  // ===================================
 
   useEffect(() => {
 
     fetchProduct();
 
-  }, []);
+  }, [fetchProduct]);
+
+  // ===================================
+  // HANDLE CHANGE
+  // ===================================
 
   const handleChange = (e) => {
 
-    setProduct({
-      ...product,
-      [e.target.name]: e.target.value
+    setProductData({
+
+      ...productData,
+
+      [e.target.name]:
+        e.target.value
+
     });
+
   };
+
+  // ===================================
+  // UPDATE PRODUCT
+  // ===================================
 
   const handleSubmit = async (e) => {
 
@@ -62,12 +111,17 @@ function EditProduct() {
 
     try {
 
-      const response = await axios.put(
+      await axios.put(
+
         `http://127.0.0.1:5000/api/update-product/${id}`,
-        product
+
+        productData
+
       );
 
-      alert(response.data.message);
+      alert(
+        "Product Updated Successfully"
+      );
 
       navigate("/manage-products");
 
@@ -75,12 +129,13 @@ function EditProduct() {
 
       console.log(error);
 
-      alert("Failed To Update Product");
+      alert("Update Failed");
 
     }
   };
 
   return (
+
     <div>
 
       <Navbar />
@@ -92,13 +147,15 @@ function EditProduct() {
           onSubmit={handleSubmit}
         >
 
-          <h1>Edit Product</h1>
+          <h1>
+            Edit Product
+          </h1>
 
           <input
             type="text"
             name="name"
-            value={product.name || ""}
             placeholder="Product Name"
+            value={productData.name}
             onChange={handleChange}
             required
           />
@@ -106,8 +163,8 @@ function EditProduct() {
           <input
             type="number"
             name="price"
-            value={product.price || ""}
             placeholder="Price"
+            value={productData.price}
             onChange={handleChange}
             required
           />
@@ -115,8 +172,8 @@ function EditProduct() {
           <input
             type="text"
             name="image"
-            value={product.image || ""}
             placeholder="Image URL"
+            value={productData.image}
             onChange={handleChange}
             required
           />
@@ -124,26 +181,24 @@ function EditProduct() {
           <input
             type="text"
             name="category"
-            value={product.category || ""}
             placeholder="Category"
+            value={productData.category}
             onChange={handleChange}
             required
           />
 
           <textarea
             name="description"
-            value={product.description || ""}
             placeholder="Description"
+            value={productData.description}
             onChange={handleChange}
-            style={{
-              padding: "15px",
-              borderRadius: "10px",
-              border: "1px solid #ddd"
-            }}
-          />
+            required
+          ></textarea>
 
           <button type="submit">
+
             Update Product
+
           </button>
 
         </form>
@@ -151,6 +206,7 @@ function EditProduct() {
       </div>
 
     </div>
+
   );
 }
 

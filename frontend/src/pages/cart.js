@@ -1,147 +1,198 @@
-import { useContext } from "react";
+import { useEffect, useState } from "react";
+
+import {
+  FaTrash,
+  FaShoppingCart
+} from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 
-import { CartContext } from "../context/CartContext";
+import Footer from "../components/Footer";
 
-import { Link } from "react-router-dom";
+import "../styles/home.css";
 
 function Cart() {
 
-  const {
-    cartItems,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity
-  } = useContext(CartContext);
+  const [cartItems, setCartItems] =
+    useState([]);
 
-  // Calculate Total
-  const totalPrice = cartItems.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
-  );
+  // LOAD CART
+
+  useEffect(() => {
+
+    const cart =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
+
+    setCartItems(cart);
+
+  }, []);
+
+  // REMOVE ITEM
+
+  const removeItem = (index) => {
+
+    const updatedCart =
+      [...cartItems];
+
+    updatedCart.splice(index, 1);
+
+    setCartItems(updatedCart);
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(updatedCart)
+    );
+  };
+
+  // TOTAL
+
+  const total =
+    cartItems.reduce(
+
+      (acc, item) =>
+
+        acc + Number(item.price),
+
+      0
+    );
 
   return (
+
     <div>
 
       <Navbar />
 
-      <div style={{ padding: "40px" }}>
+      <div className="cart-page">
 
-        <h1>Your Cart</h1>
+        <h1 className="cart-title">
+
+          <FaShoppingCart />
+
+          My Cart
+
+        </h1>
 
         {
+
           cartItems.length === 0 ? (
 
-            <p>Cart is Empty</p>
+            <div className="empty-cart">
+
+              <h2>
+                Your cart is empty
+              </h2>
+
+            </div>
 
           ) : (
 
-            <>
-              {
-                cartItems.map((item) => (
+            <div className="cart-grid">
 
-                  <div
-                    key={item.id}
-                    style={{
-                      marginBottom: "20px",
-                      padding: "20px",
-                      background: "#fff",
-                      borderRadius: "10px",
-                      boxShadow:
-                        "0px 2px 10px rgba(0,0,0,0.1)"
-                    }}
-                  >
+              {/* LEFT */}
 
-                    <h2>{item.name}</h2>
+              <div className="cart-items">
 
-                    <p>₹ {item.price}</p>
+                {
 
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "10px",
-                        alignItems: "center"
-                      }}
-                    >
+                  cartItems.map(
 
-                      <button
-                        onClick={() =>
-                          decreaseQuantity(item.id)
-                        }
+                    (item, index) => (
+
+                      <div
+                        className="cart-card"
+                        key={index}
                       >
-                        -
-                      </button>
 
-                      <span>
-                        {item.quantity}
-                      </span>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                        />
 
-                      <button
-                        onClick={() =>
-                          increaseQuantity(item.id)
-                        }
-                      >
-                        +
-                      </button>
+                        <div className="cart-info">
 
-                    </div>
+                          <h2>
+                            {item.name}
+                          </h2>
 
-                    <h3>
-                      Total:
-                      ₹ {item.price * item.quantity}
-                    </h3>
+                          <p>
+                            ₹{item.price}
+                          </p>
 
-                    <button
-                      onClick={() =>
-                        removeFromCart(item.id)
-                      }
-                      style={{
-                        background: "red",
-                        color: "white",
-                        border: "none",
-                        padding: "10px",
-                        borderRadius: "5px",
-                        cursor: "pointer"
-                      }}
-                    >
-                      Remove
-                    </button>
+                        </div>
 
-                  </div>
+                        <button
+                          className="remove-btn"
+                          onClick={() =>
+                            removeItem(index)
+                          }
+                        >
 
-                ))
-              }
+                          <FaTrash />
 
-              <h2>
-                Grand Total: ₹ {totalPrice}
-              </h2>
-              <Link to="/checkout">
+                        </button>
 
-  <button
-    style={{
-      padding: "15px 25px",
-      background: "#c2185b",
-      color: "white",
-      border: "none",
-      borderRadius: "10px",
-      cursor: "pointer",
-      marginTop: "20px"
-    }}
-  >
-    Proceed To Checkout
-  </button>
+                      </div>
 
-</Link>
-            </>
+                    )
+
+                  )
+
+                }
+
+              </div>
+
+              {/* RIGHT */}
+
+              <div className="cart-summary">
+
+                <h2>
+                  Order Summary
+                </h2>
+
+                <div className="summary-row">
+
+                  <span>
+                    Items
+                  </span>
+
+                  <span>
+                    {cartItems.length}
+                  </span>
+
+                </div>
+
+                <div className="summary-row">
+
+                  <span>
+                    Total
+                  </span>
+
+                  <span>
+                    ₹{total}
+                  </span>
+
+                </div>
+
+                <button className="checkout-btn"onClick={() =>
+                window.location.href ="/checkout"
+                }/>
+
+              </div>
+
+            </div>
 
           )
+
         }
 
       </div>
 
+      <Footer />
+
     </div>
+
   );
 }
 

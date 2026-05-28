@@ -1,291 +1,310 @@
-import { useContext, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 
-import { CartContext } from "../context/CartContext";
+import Footer from "../components/Footer";
+
+import "../styles/home.css";
 
 function Checkout() {
 
-  const { cartItems } = useContext(CartContext);
+  const [cartItems, setCartItems] =
+    useState([]);
 
-  const [address, setAddress] = useState({
-    fullname: "",
-    phone: "",
-    city: "",
-    pincode: "",
-    addressLine: ""
-  });
+  const [formData, setFormData] =
+    useState({
+
+      name: "",
+
+      phone: "",
+
+      city: "",
+
+      pincode: "",
+
+      address: ""
+
+    });
+
+  // LOAD CART
+
+  useEffect(() => {
+
+    const cart =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
+
+    setCartItems(cart);
+
+  }, []);
+
+  // HANDLE INPUT
 
   const handleChange = (e) => {
-    setAddress({
-      ...address,
-      [e.target.name]: e.target.value
+
+    setFormData({
+
+      ...formData,
+
+      [e.target.name]:
+        e.target.value
+
     });
+
   };
 
-  // Calculate Total
-  const totalPrice = cartItems.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
-  );
+  // TOTAL PRICE
 
-  // Payment Function
-  const placeOrder = async () => {
+  const total =
+    cartItems.reduce(
+
+      (acc, item) =>
+
+        acc + Number(item.price),
+
+      0
+    );
+
+  // RAZORPAY PAYMENT
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    // CHECK EMPTY CART
 
     if (cartItems.length === 0) {
+
       alert("Cart is Empty");
+
       return;
+
     }
 
-    try {
+    const options = {
 
-      // Create Razorpay Order
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/create-order",
-        {
-          amount: totalPrice
-        }
+      key: "rzp_test_Su58Ho24FBCS09",
+
+      amount: total * 100,
+
+      currency: "INR",
+
+      name: "Aura Gifting",
+
+      description: "Luxury Gift Purchase",
+
+      image:
+        "https://cdn-icons-png.flaticon.com/512/869/869636.png",
+
+      handler: function (response) {
+
+        alert(
+          "Payment Successful"
+        );
+
+        console.log(response);
+
+        // CLEAR CART
+
+        localStorage.removeItem("cart");
+
+        // REDIRECT
+
+        window.location.href = "/";
+      },
+
+      prefill: {
+
+        name: formData.name,
+
+        contact: formData.phone
+
+      },
+
+      notes: {
+
+        address:
+          formData.address
+
+      },
+
+      theme: {
+
+        color: "#d4af37"
+
+      }
+
+    };
+
+    const razorpay =
+      new window.Razorpay(
+        options
       );
 
-      const order = response.data;
-
-      const options = {
-
-        key: "rzp_test_Su58Ho24FBCS09",
-
-        amount: order.amount,
-
-        currency: "INR",
-
-        name: "Aura Gifting",
-
-        description: "Luxury Gifts Payment",
-
-        order_id: order.id,
-
-        handler: async function (response) {
-
-          try {
-
-            // Save Order In Database
-            const saveResponse = await axios.post(
-              "http://127.0.0.1:5000/api/save-order",
-              {
-                fullname: address.fullname,
-                userEmail: JSON.parse(localStorage.getItem("user"))?.email,
-                phone: address.phone,address: `
-                  ${address.addressLine},
-                  ${address.city},
-                  ${address.pincode}
-                `,
-                totalAmount: totalPrice,
-                cartItems: cartItems
-              }
-            );
-
-            alert(saveResponse.data.message);
-
-            console.log(response);
-
-          } catch (error) {
-
-            console.log(error);
-
-            alert("Order Save Failed");
-
-          }
-        },
-
-        prefill: {
-          name: address.fullname,
-          contact: address.phone
-        },
-
-        notes: {
-          address: address.addressLine
-        },
-
-        theme: {
-          color: "#c2185b"
-        }
-      };
-
-      const razorpay = new window.Razorpay(options);
-
-      razorpay.open();
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert("Payment Failed");
-
-    }
+    razorpay.open();
   };
 
   return (
+
     <div>
 
       <Navbar />
 
-      <div
-        style={{
-          padding: "40px",
-          display: "flex",
-          gap: "40px",
-          flexWrap: "wrap"
-        }}
-      >
+      <div className="checkout-page">
 
-        {/* Shipping Form */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: "320px",
-            background: "white",
-            padding: "30px",
-            borderRadius: "20px",
-            boxShadow:
-              "0px 2px 10px rgba(0,0,0,0.1)"
-          }}
-        >
+        {/* LEFT SIDE */}
 
-          <h1>Shipping Address</h1>
+        <div className="checkout-form-box">
 
-          <input
-            type="text"
-            name="fullname"
-            placeholder="Full Name"
-            onChange={handleChange}
-            style={inputStyle}
-          />
+          <h1>
+            Shipping Address
+          </h1>
 
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            onChange={handleChange}
-            style={inputStyle}
-          />
+          <form onSubmit={handleSubmit}>
 
-          <input
-            type="text"
-            name="city"
-            placeholder="City"
-            onChange={handleChange}
-            style={inputStyle}
-          />
+            {/* NAME */}
 
-          <input
-            type="text"
-            name="pincode"
-            placeholder="Pincode"
-            onChange={handleChange}
-            style={inputStyle}
-          />
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
 
-          <textarea
-            name="addressLine"
-            placeholder="Full Address"
-            onChange={handleChange}
-            style={{
-              ...inputStyle,
-              height: "100px"
-            }}
-          />
+            {/* PHONE */}
+
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+
+            {/* CITY */}
+
+            <input
+              type="text"
+              name="city"
+              placeholder="City"
+              value={formData.city}
+              onChange={handleChange}
+              required
+            />
+
+            {/* PINCODE */}
+
+            <input
+              type="text"
+              name="pincode"
+              placeholder="Pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              required
+            />
+
+            {/* ADDRESS */}
+
+            <textarea
+              name="address"
+              placeholder="Full Address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            ></textarea>
+
+            {/* BUTTON */}
+
+            <button
+              type="submit"
+              className="place-order-btn"
+            >
+
+              Proceed to Checkout
+
+            </button>
+
+          </form>
 
         </div>
 
-        {/* Order Summary */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: "320px",
-            background: "white",
-            padding: "30px",
-            borderRadius: "20px",
-            boxShadow:
-              "0px 2px 10px rgba(0,0,0,0.1)"
-          }}
-        >
 
-          <h1>Order Summary</h1>
+        {/* RIGHT SIDE */}
+
+        <div className="checkout-summary">
+
+          <h1>
+            Order Summary
+          </h1>
 
           {
+
             cartItems.length === 0 ? (
 
-              <p>Cart is Empty</p>
+              <p>
+                Your Cart is Empty
+              </p>
 
             ) : (
 
-              cartItems.map((item) => (
+              cartItems.map(
 
-                <div
-                  key={item.id}
-                  style={{
-                    marginBottom: "20px",
-                    borderBottom: "1px solid #ddd",
-                    paddingBottom: "10px"
-                  }}
-                >
+                (item, index) => (
 
-                  <h3>{item.name}</h3>
+                  <div
+                    className="checkout-item"
+                    key={index}
+                  >
 
-                  <p>
-                    ₹ {item.price} × {item.quantity}
-                  </p>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                    />
 
-                  <h4>
-                    Total:
-                    ₹ {item.price * item.quantity}
-                  </h4>
+                    <div>
 
-                </div>
+                      <h3>
+                        {item.name}
+                      </h3>
 
-              ))
+                      <p>
+                        ₹{item.price}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                )
+
+              )
 
             )
+
           }
 
-          <h2>
-            Grand Total: ₹ {totalPrice}
-          </h2>
+          {/* TOTAL */}
 
-          <button
-            onClick={placeOrder}
-            style={{
-              width: "100%",
-              padding: "15px",
-              background: "#c2185b",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "18px",
-              marginTop: "20px"
-            }}
-          >
-            Pay Now
-          </button>
+          <h2 className="checkout-total">
+
+            Grand Total:
+            ₹ {total}
+
+          </h2>
 
         </div>
 
       </div>
 
+      <Footer />
+
     </div>
+
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "15px",
-  marginTop: "15px",
-  borderRadius: "10px",
-  border: "1px solid #ddd",
-  fontSize: "16px",
-  boxSizing: "border-box"
-};
 
 export default Checkout;

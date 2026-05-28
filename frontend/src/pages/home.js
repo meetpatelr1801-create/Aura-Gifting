@@ -6,15 +6,13 @@ import Navbar from "../components/Navbar";
 
 import ProductCard from "../components/ProductCard";
 
+import Footer from "../components/Footer";
+
 import "../styles/home.css";
 
 function Home() {
 
   const [products, setProducts] = useState([]);
-
-  const [search, setSearch] = useState("");
-
-  const [category, setCategory] = useState("All");
 
   // Fetch Products
   const fetchProducts = async () => {
@@ -40,99 +38,64 @@ function Home() {
 
   }, []);
 
-  // Filter Products
-  const filteredProducts = products.filter(
-    (product) => {
-
-      const matchesSearch =
-        product.name
-          .toLowerCase()
-          .includes(search.toLowerCase());
-
-      const matchesCategory =
-        category === "All"
-          ? true
-          : product.category === category;
-
-      return (
-        matchesSearch &&
-        matchesCategory
-      );
-    }
-  );
-
   return (
+
     <div>
 
       <Navbar />
 
-      {/* Hero Section */}
+      {/* HERO SECTION */}
+
       <section className="hero">
+
+        {/* Floating Circles */}
+
+        <div className="floating-circle one"></div>
+
+        <div className="floating-circle two"></div>
+
+        <div className="floating-circle three"></div>
 
         <div className="hero-content">
 
-          <h1>Aura Gifting</h1>
+          <h1>
+            Make Every Surprise Special
+          </h1>
 
           <p>
-            Elegant Hampers & Luxury Bouquets
+            Curated with love, delivered with elegance
           </p>
+
+          <button className="cta-button">
+            Shop Collections
+          </button>
 
         </div>
 
       </section>
 
-      {/* Search & Filter */}
-      <div className="search-filter">
 
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
-        />
+      {/* PRODUCTS SECTION */}
 
-        <select
-          value={category}
-          onChange={(e) =>
-            setCategory(e.target.value)
-          }
-        >
-
-          <option value="All">
-            All Categories
-          </option>
-
-          <option value="Bouquet">
-            Bouquet
-          </option>
-
-          <option value="Hamper">
-            Hamper
-          </option>
-
-        </select>
-
-      </div>
-
-      {/* Products */}
       <section className="products-section">
 
-        <h1 className="product-title">
+        <h1 className="section-title">
           Featured Products
         </h1>
 
-        <div className="products-container">
+        <div className="products-grid">
 
           {
-            filteredProducts.length === 0 ? (
 
-              <h2>No Products Found</h2>
+            products.length === 0 ? (
+
+              <h2>
+                No Products Found
+              </h2>
 
             ) : (
 
-              filteredProducts.map((product) => (
+              products.map((product) => (
 
                 <ProductCard
                   key={product.id}
@@ -142,13 +105,99 @@ function Home() {
               ))
 
             )
+
           }
 
         </div>
 
       </section>
 
+
+      {/* CONTACT SECTION */}
+
+      <section className="contact-section">
+
+        <h1 className="section-title">
+          Get in Touch
+        </h1>
+
+        <div className="contact-grid">
+
+          {/* LEFT SIDE */}
+
+          <div className="contact-info">
+
+            <h3>
+              Contact Information
+            </h3>
+
+            <div className="contact-item">
+              <span>📍</span>
+              <p>
+                Mere ghar ke baju me, GJ01
+              </p>
+            </div>
+
+            <div className="contact-item">
+              <span>📞</span>
+              <p>
+                +91 246802468
+              </p>
+            </div>
+
+            <div className="contact-item">
+              <span>✉️</span>
+              <p>
+                sakhi@auragifting.com
+              </p>
+            </div>
+
+            <div className="contact-item">
+              <span>🕒</span>
+              <p>
+                Mon - Sat: 9:00 AM - 6:00 PM
+              </p>
+            </div>
+
+          </div>
+
+
+          {/* RIGHT SIDE */}
+
+          <div className="contact-form">
+
+            <h3>
+              Send Us a Message
+            </h3>
+
+            <input
+              type="text"
+              placeholder="Your name"
+            />
+
+            <input
+              type="email"
+              placeholder="your@email.com"
+            />
+
+            <textarea
+              placeholder="Your message..."
+            ></textarea>
+
+            <button>
+              Send Message
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <Footer />
+
     </div>
+
   );
 }
 

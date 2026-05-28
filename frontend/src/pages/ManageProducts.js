@@ -2,21 +2,27 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 
-import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
+
+import Navbar from "../components/Navbar";
+
+import "../styles/home.css";
 
 function ManageProducts() {
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] =
+    useState([]);
 
-  // Fetch Products
+  // FETCH PRODUCTS
+
   const fetchProducts = async () => {
 
     try {
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/products"
-      );
+      const response =
+        await axios.get(
+          "http://127.0.0.1:5000/api/products"
+        );
 
       setProducts(response.data);
 
@@ -27,117 +33,118 @@ function ManageProducts() {
     }
   };
 
-  // Delete Product
-  const deleteProduct = async (id) => {
-
-    try {
-
-      const response = await axios.delete(
-        `http://127.0.0.1:5000/api/delete-product/${id}`
-      );
-
-      alert(response.data.message);
-
-      fetchProducts();
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert("Failed To Delete Product");
-
-    }
-  };
-
   useEffect(() => {
 
     fetchProducts();
 
   }, []);
 
+  // DELETE PRODUCT
+
+  const deleteProduct = async (id) => {
+
+    const confirmDelete =
+      window.confirm(
+        "Delete this product?"
+      );
+
+    if (!confirmDelete) {
+
+      return;
+
+    }
+
+    try {
+
+      await axios.delete(
+
+        `http://127.0.0.1:5000/api/delete-product/${id}`
+
+      );
+
+      alert(
+        "Product Deleted"
+      );
+
+      fetchProducts();
+
+    } catch (error) {
+
+      alert("Delete Failed");
+
+    }
+  };
+
   return (
+
     <div>
 
       <Navbar />
 
-      <div style={{ padding: "40px" }}>
+      <div className="manage-page">
 
-        <h1
-          style={{
-            color: "#c2185b",
-            marginBottom: "30px"
-          }}
-        >
+        <h1 className="manage-title">
+
           Manage Products
+
         </h1>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "20px"
-          }}
-        >
+        <div className="manage-grid">
 
           {
+
             products.map((product) => (
 
               <div
+                className="manage-card"
                 key={product.id}
-                style={{
-                  background: "white",
-                  padding: "20px",
-                  borderRadius: "20px",
-                  boxShadow:
-                    "0px 2px 10px rgba(0,0,0,0.1)"
-                }}
               >
 
                 <img
                   src={product.image}
                   alt={product.name}
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    objectFit: "cover",
-                    borderRadius: "10px"
-                  }}
                 />
 
-                <h2>{product.name}</h2>
+                <div className="manage-info">
 
-                <p>
-                  ₹ {product.price}
-                </p>
+                  <h2>
+                    {product.name}
+                  </h2>
 
-                <p>
-                  {product.category}
-                </p>
+                  <p>
+                    ₹{product.price}
+                  </p>
 
-                <Link
-  to={`/edit-product/${product.id}`}
->
+                  <div className="manage-buttons">
 
-  <button
-    style={{
-      background: "#c2185b",
-      color: "white",
-      border: "none",
-      padding: "12px 20px",
-      borderRadius: "10px",
-      cursor: "pointer",
-      marginRight: "10px"
-    }}
-  >
-    Edit Product
-  </button>
+                    <Link
+                      to={`/edit-product/${product.id}`}
+                      className="edit-btn"
+                    >
 
-</Link>
+                      Edit
+
+                    </Link>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() =>
+                        deleteProduct(product.id)
+                      }
+                    >
+
+                      Delete
+
+                    </button>
+
+                  </div>
+
+                </div>
 
               </div>
 
             ))
+
           }
 
         </div>
@@ -145,6 +152,7 @@ function ManageProducts() {
       </div>
 
     </div>
+
   );
 }
 

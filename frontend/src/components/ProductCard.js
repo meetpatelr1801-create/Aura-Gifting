@@ -1,79 +1,106 @@
-import { useContext } from "react";
+import { Link } from "react-router-dom";
 
-import { CartContext }
-from "../context/CartContext";
-
-import { WishlistContext }
-from "../context/WishlistContext";
-
-import { Link }
-from "react-router-dom";
+import {
+  FaEye
+} from "react-icons/fa";
 
 function ProductCard({ product }) {
 
-  const { addToCart } =
-    useContext(CartContext);
+  // ADD TO CART
 
-  const { addToWishlist } =
-    useContext(WishlistContext);
+  const addToCart = () => {
+
+    const cart =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
+
+    cart.push(product);
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart)
+    );
+
+    alert("Added To Cart");
+  };
 
   return (
-    <div className="product-card">
 
-      <Link
-        to={`/product/${product.id}`}
-        style={{
-          textDecoration: "none",
-          color: "black"
-        }}
-      >
+    <div className="luxury-product-card">
 
-        <img
-          src={product.image}
-          alt={product.name}
-        />
+      {/* PRODUCT IMAGE */}
 
-        <h2>{product.name}</h2>
+      <div className="luxury-product-image">
 
-        <p>₹ {product.price}</p>
+        {
 
-      </Link>
+          product.image ? (
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          padding: "15px"
-        }}
-      >
+            <img
+              src={product.image}
+              alt={product.name}
+            />
 
-        <button
-          onClick={() =>
-            addToCart(product)
-          }
-        >
-          Add To Cart
-        </button>
+          ) : (
 
-        <button
-          onClick={() =>
-            addToWishlist(product)
-          }
-          style={{
-            background: "#ff4081",
-            color: "white",
-            border: "none",
-            padding: "10px",
-            borderRadius: "10px",
-            cursor: "pointer"
-          }}
-        >
-          ❤️
-        </button>
+            <div className="gift-icon">
+
+              🎁
+
+            </div>
+
+          )
+
+        }
+
+      </div>
+
+
+      {/* PRODUCT INFO */}
+
+      <div className="luxury-product-info">
+
+        <h2>
+
+          {product.name}
+
+        </h2>
+
+        <p className="luxury-price">
+
+          ₹{product.price}
+
+        </p>
+
+        {/* BUTTONS */}
+
+        <div className="luxury-buttons">
+
+          <button
+            className="cart-btn"
+            onClick={addToCart}
+          >
+
+            Add to Cart
+
+          </button>
+
+          <Link
+            to={`/product/${product.id}`}
+            className="view-btn"
+          >
+
+            <FaEye />
+
+          </Link>
+
+        </div>
 
       </div>
 
     </div>
+
   );
 }
 

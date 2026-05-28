@@ -1,94 +1,134 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+import logo from "../assets/logo.jpg";
+
+import {
+  FaShoppingCart,
+  FaSignInAlt,
+  FaSignOutAlt
+} from "react-icons/fa";
 
 function Navbar() {
 
-  const navigate = useNavigate();
+  // GET USER
 
   const user = JSON.parse(
     localStorage.getItem("user")
   );
 
-  const logout = () => {
+  // LOGOUT FUNCTION
+
+  const handleLogout = () => {
 
     localStorage.removeItem("user");
 
-    navigate("/login");
+    window.location.href = "/";
+
   };
 
   return (
+
     <nav className="navbar">
 
-      <h1>Aura Gifting</h1>
+      {/* LOGO */}
+
+      <div className="logo-container">
+
+  <img
+    src={logo}
+    alt="Aura Gifting"
+    className="navbar-logo"
+  />
+
+  <h1 className="logo-text">
+
+    Aura Gifting
+
+  </h1>
+
+</div>
+
+
+      {/* CENTER LINKS */}
 
       <div className="nav-links">
 
-        <Link to="/">Home</Link>
+        <Link to="/">
+          Home
+        </Link>
 
-        <Link to="/cart">Cart</Link>
+        <Link to="/shop">
+          Shop
+        </Link>
 
-        {
-          user ? (
+        <Link to="/contact">
+          Contact
+        </Link>
 
-            <>
-              <Link to="/my-orders">
-                My Orders
-              </Link>
-
-              {
-                user.role === "admin" && (
-
-                  <>
-                    <Link to="/admin">
-                      Admin
-                    </Link>
-
-                    <Link to="/add-product">
-                      Add Product
-                    </Link>
-
-                    <Link to="/manage-products">
-                      Manage Products
-                    </Link>
-                  </>
-                )
-              }
-
-              <button
-                onClick={logout}
-                style={{
-                  background: "#c2185b",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 15px",
-                  borderRadius: "10px",
-                  cursor: "pointer"
-                }}
-              >
-                Logout
-              </button>
-            </>
-
-          ) : (
-
-            <>
-              <Link to="/login">
-                Login
-              </Link>
-
-              <Link to="/register">
-                Register
-              </Link>
-              <Link to="/wishlist">
-              Wishlist
-              </Link>
-            </>
-
-          )
-        }
 
       </div>
 
+
+      {/* RIGHT SIDE */}
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "20px"
+        }}
+      >
+
+        {
+
+          user ? (
+
+            <button
+              className="login-btn"
+              onClick={handleLogout}
+            >
+
+              <FaSignOutAlt />
+
+              <span>
+                Logout
+              </span>
+
+            </button>
+
+          ) : (
+
+            <Link
+              to="/login"
+              className="login-btn"
+            >
+
+              <FaSignInAlt />
+
+              <span>
+                Login
+              </span>
+
+            </Link>
+
+          )
+
+        }
+<Link to="/cart">
+
+  <FaShoppingCart
+    style={{
+      fontSize: "28px",
+      color: "#333",
+      cursor: "pointer"
+    }}
+  />
+
+</Link>
+      </div>
+
     </nav>
+
   );
 }
 
