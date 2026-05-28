@@ -276,7 +276,12 @@ alert(response.data.message);
               {/* CLEAR */}
 
               <div className="clear-data">
-
+                onClick={() =>{
+                  localStorage.clear();
+                  alert("Saved data cleared!");
+                  window.location.reload();
+                }}
+                
                 <FaTrash />
 
                 <span>
