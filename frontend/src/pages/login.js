@@ -74,53 +74,56 @@ function Login() {
 
   // LOGIN
 
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  try {
 
-      const response = await axios.post(
+    const response = await axios.post(
 
-  `${process.env.REACT_APP_API_URL}/api/login`,
+      `${process.env.REACT_APP_API_URL}/api/login`,
 
-  loginData
+      loginData
 
-);
+    );
 
-alert(response.data.message);
+    console.log("SUCCESS:", response.data);
 
-      // SAVE USER
+    alert(response.data.message);
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(response.data.user)
-      );
+    localStorage.setItem(
+      "user",
+      JSON.stringify(response.data.user)
+    );
 
-      // REDIRECT
+    if (
+      response.data.user.role === "admin"
+    ) {
 
-      if (
-        response.data.user.role === "admin"
-      ) {
+      window.location.href = "/admin";
 
-        window.location.href =
-          "/admin";
+    } else {
 
-      } else {
-
-        window.location.href =
-          "/";
-
-      }
-
-    } catch (error) {
-
-      alert(
-        "Invalid Email or Password"
-      );
+      window.location.href = "/";
 
     }
-  };
+
+  } catch (error) {
+
+    console.log(
+      "LOGIN ERROR:",
+      error.response?.data
+    );
+
+    alert(
+      error.response?.data?.message ||
+      error.message
+    );
+
+  }
+
+};
 
   // REGISTER
 
@@ -274,21 +277,18 @@ alert(response.data.message);
               </button>
 
               {/* CLEAR */}
+<div
+  className="clear-data"
+  onClick={() => {
 
-              <div className="clear-data">
-                onClick={() =>{
-                  localStorage.clear();
-                  alert("Saved data cleared!");
-                  window.location.reload();
-                }}
-                
-                <FaTrash />
+    localStorage.clear();
 
-                <span>
-                  Clear Saved Data
-                </span>
+    alert("Saved Data Cleared");
 
-              </div>
+    window.location.reload();
+
+  }}
+/>
 
             </form>
 
