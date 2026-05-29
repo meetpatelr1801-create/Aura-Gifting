@@ -629,7 +629,7 @@ def upload_image():
         image.save(image_path)
 
         image_url = (
-            f"http://127.0.0.1:5000/uploads/{filename}"
+            f"request.host_url + "uploads/" + filename"
         )
 
         return jsonify({
