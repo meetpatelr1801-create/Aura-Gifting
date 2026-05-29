@@ -13,11 +13,8 @@ function MyOrders() {
   const [orders, setOrders] =
     useState([]);
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
-
   // Fetch Orders
+
   const fetchOrders = useCallback(
     async () => {
 
@@ -34,8 +31,9 @@ function MyOrders() {
         console.log(error);
 
       }
+
     },
-    [user.email]
+    []
   );
 
   useEffect(() => {
@@ -45,6 +43,7 @@ function MyOrders() {
   }, [fetchOrders]);
 
   return (
+
     <div>
 
       <Navbar />
@@ -61,6 +60,7 @@ function MyOrders() {
         </h1>
 
         {
+
           orders.length === 0 ? (
 
             <h2>No Orders Found</h2>
@@ -86,20 +86,15 @@ function MyOrders() {
                 </h2>
 
                 <p>
-                  Total:
-                  ₹ {order.total_amount}
+                  Total: ₹ {order.total_amount}
                 </p>
 
                 <p>
-                  Status:
-                  {" "}
-                  {order.payment_status}
+                  Status: {order.payment_status}
                 </p>
 
                 <p>
-                  Date:
-                  {" "}
-                  {order.created_at}
+                  Date: {order.created_at}
                 </p>
 
               </div>
@@ -107,11 +102,13 @@ function MyOrders() {
             ))
 
           )
+
         }
 
       </div>
 
     </div>
+
   );
 }
 

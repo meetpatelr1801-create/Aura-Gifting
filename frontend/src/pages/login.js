@@ -288,7 +288,15 @@ alert(response.data.message);
     window.location.reload();
 
   }}
-/>
+>
+
+  <FaTrash />
+
+  <span>
+    Clear Saved Data
+  </span>
+
+</div>
 
             </form>
 
