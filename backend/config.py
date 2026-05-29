@@ -1,6 +1,6 @@
-MYSQL_HOST = 'localhost'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'meet_0118'
+MYSQL_HOST = 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com'
+MYSQL_USER = '2Rg5XMhroTAj5ow.root'
+MYSQL_PASSWORD = 'U94y0sdG5IuvwOfP'
 MYSQL_DB = 'aura_gifting'
 RAZORPAY_KEY_ID = "rzp_test_Su58Ho24FBCS09"
 RAZORPAY_KEY_SECRET = "WXvpUbpHnpq54bT0XXAWtpD3"
