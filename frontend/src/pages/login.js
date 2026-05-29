@@ -1,7 +1,5 @@
 import { useState } from "react";
-
 import axios from "axios";
-
 import {
   FaSignInAlt,
   FaUserPlus,
@@ -12,359 +10,293 @@ import {
 import "../styles/home.css";
 
 function Login() {
+  const [activeTab, setActiveTab] = useState("login");
 
-  // ACTIVE TAB
+  const [loading, setLoading] = useState(false);
 
-  const [activeTab, setActiveTab] =
-    useState("login");
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
+  });
 
-  // LOGIN DATA
-
-  const [loginData, setLoginData] =
-    useState({
-
-      email: "",
-
-      password: ""
-
-    });
-
-  // REGISTER DATA
-
-  const [registerData, setRegisterData] =
-    useState({
-
-      name: "",
-
-      email: "",
-
-      password: ""
-
-    });
-
-  // LOGIN INPUT
+  const [registerData, setRegisterData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
 
   const handleLoginChange = (e) => {
-
     setLoginData({
-
       ...loginData,
-
-      [e.target.name]:
-        e.target.value
-
+      [e.target.name]: e.target.value
     });
-
   };
-
-  // REGISTER INPUT
 
   const handleRegisterChange = (e) => {
-
     setRegisterData({
-
       ...registerData,
-
-      [e.target.name]:
-        e.target.value
-
+      [e.target.name]: e.target.value
     });
-
   };
 
-  // LOGIN
-
-const handleLogin = async (e) => {
-
-  e.preventDefault();
-
-  try {
-
-    const response = await axios.post(
-
-      `${process.env.REACT_APP_API_URL}/api/login`,
-
-      loginData
-
-    );
-
-    console.log("SUCCESS:", response.data);
-
-    alert(response.data.message);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify(response.data.user)
-    );
-
-    if (
-      response.data.user.role === "admin"
-    ) {
-
-      window.location.href = "/admin";
-
-    } else {
-
-      window.location.href = "/";
-
-    }
-
-  } catch (error) {
-
-    console.log(
-      "LOGIN ERROR:",
-      error.response?.data
-    );
-
-    alert(
-      error.response?.data?.message ||
-      error.message
-    );
-
-  }
-
-};
-
-  // REGISTER
-
-  const handleRegister = async (e) => {
-
+  const handleLogin = async (e) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
-
       const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/login`,
+        {
+          email: loginData.email.trim(),
+          password: loginData.password
+        }
+      );
 
-  `${process.env.REACT_APP_API_URL}/api/register`,
+      console.log("LOGIN SUCCESS:", response.data);
 
- registerData
+      if (!response.data.user) {
+        alert("User data not received");
+        return;
+      }
 
-);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.data.user)
+      );
 
-alert(response.data.message);
+      if (response.data.token) {
+        localStorage.setItem(
+          "token",
+          response.data.token
+        );
+      }
 
-      // SWITCH TO LOGIN
+      alert(
+        response.data.message ||
+        "Login Successful"
+      );
+
+      if (
+        response.data.user.role === "admin"
+      ) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/";
+      }
+
+    } catch (error) {
+      console.error(error);
+
+      if (error.response) {
+        alert(
+          error.response.data.message ||
+          "Invalid Email or Password"
+        );
+      } else {
+        alert(
+          "Server Connection Failed"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/register`,
+        registerData
+      );
+
+      alert(
+        response.data.message ||
+        "Registration Successful"
+      );
+
+      setRegisterData({
+        name: "",
+        email: "",
+        password: ""
+      });
 
       setActiveTab("login");
 
     } catch (error) {
+      console.error(error);
 
       alert(
+        error.response?.data?.message ||
         "Registration Failed"
       );
-
+    } finally {
+      setLoading(false);
     }
   };
 
+  const clearData = () => {
+    localStorage.clear();
+    alert("Saved Data Cleared");
+    window.location.reload();
+  };
+
   return (
-
     <div className="login-page">
-
       <div className="login-modal">
-
-        {/* CLOSE */}
 
         <button
           className="close-btn"
           onClick={() =>
-            window.location.href = "/"
+            (window.location.href = "/")
           }
         >
-
           <FaTimes />
-
         </button>
 
-
-        {/* TABS */}
-
         <div className="login-tabs">
-
           <button
             className={
               activeTab === "login"
-              ? "active-tab"
-              : ""
+                ? "active-tab"
+                : ""
             }
             onClick={() =>
               setActiveTab("login")
             }
           >
-
             Login
-
           </button>
 
           <button
             className={
               activeTab === "register"
-              ? "active-tab"
-              : ""
+                ? "active-tab"
+                : ""
             }
             onClick={() =>
               setActiveTab("register")
             }
           >
-
             Register
-
           </button>
-
         </div>
 
+        {activeTab === "login" ? (
+          <form onSubmit={handleLogin}>
 
-        {/* LOGIN FORM */}
+            <label>Email</label>
 
-        {
+            <input
+              type="email"
+              name="email"
+              value={loginData.email}
+              onChange={handleLoginChange}
+              placeholder="admin@auragifting.com"
+              required
+            />
 
-          activeTab === "login" ? (
+            <label>Password</label>
 
-            <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              placeholder="Enter Password"
+              required
+            />
 
-              <label>Email</label>
-
-              <input
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                onChange={handleLoginChange}
-                required
-              />
-
-              <label>Password</label>
-
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                onChange={handleLoginChange}
-                required
-              />
-
-              {/* OPTIONS */}
-
-              <div className="login-options">
-
-                <div className="remember">
-
-                  <input type="checkbox" />
-
-                  <span>
-                    Remember me
-                  </span>
-
-                </div>
-
-                <p className="forgot-password">
-
-                  Forgot password?
-
-                </p>
-
+            <div className="login-options">
+              <div className="remember">
+                <input type="checkbox" />
+                <span>Remember me</span>
               </div>
 
-              {/* LOGIN BUTTON */}
+              <p className="forgot-password">
+                Forgot password?
+              </p>
+            </div>
 
-              <button
-                type="submit"
-                className="luxury-login-btn"
-              >
+            <button
+              type="submit"
+              className="luxury-login-btn"
+              disabled={loading}
+            >
+              <FaSignInAlt />
 
-                <FaSignInAlt />
+              {loading
+                ? "Logging in..."
+                : "Login"}
+            </button>
 
-                Login
+            <div
+              className="clear-data"
+              onClick={clearData}
+            >
+              <FaTrash />
+              <span>
+                Clear Saved Data
+              </span>
+            </div>
 
-              </button>
+          </form>
+        ) : (
+          <form onSubmit={handleRegister}>
 
-              {/* CLEAR */}
-<div
-  className="clear-data"
-  onClick={() => {
+            <label>Full Name</label>
 
-    localStorage.clear();
+            <input
+              type="text"
+              name="name"
+              value={registerData.name}
+              onChange={handleRegisterChange}
+              placeholder="Enter Full Name"
+              required
+            />
 
-    alert("Saved Data Cleared");
+            <label>Email</label>
 
-    window.location.reload();
+            <input
+              type="email"
+              name="email"
+              value={registerData.email}
+              onChange={handleRegisterChange}
+              placeholder="Enter Email"
+              required
+            />
 
-  }}
->
+            <label>Password</label>
 
-  <FaTrash />
+            <input
+              type="password"
+              name="password"
+              value={registerData.password}
+              onChange={handleRegisterChange}
+              placeholder="Create Password"
+              required
+            />
 
-  <span>
-    Clear Saved Data
-  </span>
+            <button
+              type="submit"
+              className="luxury-login-btn"
+              disabled={loading}
+            >
+              <FaUserPlus />
 
-</div>
+              {loading
+                ? "Creating..."
+                : "Register"}
+            </button>
 
-            </form>
-
-          ) : (
-
-            /* REGISTER FORM */
-
-            <form onSubmit={handleRegister}>
-
-              <label>
-                Full Name
-              </label>
-
-              <input
-                type="text"
-                name="name"
-                placeholder="Your full name"
-                onChange={handleRegisterChange}
-                required
-              />
-
-              <label>
-                Email
-              </label>
-
-              <input
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                onChange={handleRegisterChange}
-                required
-              />
-
-              <label>
-                Password
-              </label>
-
-              <input
-                type="password"
-                name="password"
-                placeholder="Create a password"
-                onChange={handleRegisterChange}
-                required
-              />
-
-              {/* REGISTER BUTTON */}
-
-              <button
-                type="submit"
-                className="luxury-login-btn"
-              >
-
-                <FaUserPlus />
-
-                Register
-
-              </button>
-
-            </form>
-
-          )
-
-        }
-
+          </form>
+        )}
       </div>
-
     </div>
-
   );
 }
 
