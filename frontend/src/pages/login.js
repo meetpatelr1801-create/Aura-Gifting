@@ -10,41 +10,58 @@ import {
 import "../styles/home.css";
 
 function Login() {
-  const [activeTab, setActiveTab] = useState("login");
 
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] =
+    useState("login");
 
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: ""
-  });
+  const [loading, setLoading] =
+    useState(false);
 
-  const [registerData, setRegisterData] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
+  const [loginData, setLoginData] =
+    useState({
+      email: "",
+      password: ""
+    });
+
+  const [registerData, setRegisterData] =
+    useState({
+      name: "",
+      email: "",
+      password: ""
+    });
+
+  // LOGIN INPUT
 
   const handleLoginChange = (e) => {
+
     setLoginData({
       ...loginData,
       [e.target.name]: e.target.value
     });
+
   };
 
+  // REGISTER INPUT
+
   const handleRegisterChange = (e) => {
+
     setRegisterData({
       ...registerData,
       [e.target.name]: e.target.value
     });
+
   };
 
+  // LOGIN
+
   const handleLogin = async (e) => {
+
     e.preventDefault();
 
     setLoading(true);
 
     try {
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/login`,
         {
@@ -53,11 +70,17 @@ function Login() {
         }
       );
 
-      console.log("LOGIN SUCCESS:", response.data);
+      console.log(
+        "LOGIN SUCCESS:",
+        response.data
+      );
 
       if (!response.data.user) {
+
         alert("User data not received");
+
         return;
+
       }
 
       localStorage.setItem(
@@ -65,50 +88,55 @@ function Login() {
         JSON.stringify(response.data.user)
       );
 
-      if (response.data.token) {
-        localStorage.setItem(
-          "token",
-          response.data.token
-        );
-      }
-
       alert(
         response.data.message ||
         "Login Successful"
       );
 
       if (
-        response.data.user.role === "admin"
+        response.data.user.role ===
+        "admin"
       ) {
-        window.location.href = "/admin";
+
+        window.location.href =
+          "/admin";
+
       } else {
-        window.location.href = "/";
+
+        window.location.href =
+          "/";
+
       }
 
     } catch (error) {
+
       console.error(error);
 
-      if (error.response) {
-        alert(
-          error.response.data.message ||
-          "Invalid Email or Password"
-        );
-      } else {
-        alert(
-          "Server Connection Failed"
-        );
-      }
+      alert(
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message ||
+        "Login Failed"
+      );
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
+  // REGISTER
+
   const handleRegister = async (e) => {
+
     e.preventDefault();
 
     setLoading(true);
 
     try {
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/register`,
         registerData
@@ -128,25 +156,40 @@ function Login() {
       setActiveTab("login");
 
     } catch (error) {
+
       console.error(error);
 
       alert(
+        error.response?.data?.error ||
         error.response?.data?.message ||
+        error.message ||
         "Registration Failed"
       );
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
+  // CLEAR DATA
+
   const clearData = () => {
+
     localStorage.clear();
+
     alert("Saved Data Cleared");
+
     window.location.reload();
+
   };
 
   return (
+
     <div className="login-page">
+
       <div className="login-modal">
 
         <button
@@ -155,10 +198,13 @@ function Login() {
             (window.location.href = "/")
           }
         >
+
           <FaTimes />
+
         </button>
 
         <div className="login-tabs">
+
           <button
             className={
               activeTab === "login"
@@ -169,7 +215,9 @@ function Login() {
               setActiveTab("login")
             }
           >
+
             Login
+
           </button>
 
           <button
@@ -182,122 +230,179 @@ function Login() {
               setActiveTab("register")
             }
           >
+
             Register
+
           </button>
+
         </div>
 
-        {activeTab === "login" ? (
-          <form onSubmit={handleLogin}>
+        {
 
-            <label>Email</label>
+          activeTab === "login" ? (
 
-            <input
-              type="email"
-              name="email"
-              value={loginData.email}
-              onChange={handleLoginChange}
-              placeholder="admin@auragifting.com"
-              required
-            />
+            <form onSubmit={handleLogin}>
 
-            <label>Password</label>
+              <label>Email</label>
 
-            <input
-              type="password"
-              name="password"
-              value={loginData.password}
-              onChange={handleLoginChange}
-              placeholder="Enter Password"
-              required
-            />
+              <input
+                type="email"
+                name="email"
+                value={loginData.email}
+                onChange={
+                  handleLoginChange
+                }
+                placeholder="Enter Email"
+                required
+              />
 
-            <div className="login-options">
-              <div className="remember">
-                <input type="checkbox" />
-                <span>Remember me</span>
+              <label>Password</label>
+
+              <input
+                type="password"
+                name="password"
+                value={loginData.password}
+                onChange={
+                  handleLoginChange
+                }
+                placeholder="Enter Password"
+                required
+              />
+
+              <div className="login-options">
+
+                <div className="remember">
+
+                  <input
+                    type="checkbox"
+                  />
+
+                  <span>
+                    Remember me
+                  </span>
+
+                </div>
+
+                <p className="forgot-password">
+
+                  Forgot password?
+
+                </p>
+
               </div>
 
-              <p className="forgot-password">
-                Forgot password?
-              </p>
-            </div>
+              <button
+                type="submit"
+                className="luxury-login-btn"
+                disabled={loading}
+              >
 
-            <button
-              type="submit"
-              className="luxury-login-btn"
-              disabled={loading}
+                <FaSignInAlt />
+
+                {
+                  loading
+                    ? "Logging in..."
+                    : "Login"
+                }
+
+              </button>
+
+              <div
+                className="clear-data"
+                onClick={clearData}
+              >
+
+                <FaTrash />
+
+                <span>
+                  Clear Saved Data
+                </span>
+
+              </div>
+
+            </form>
+
+          ) : (
+
+            <form
+              onSubmit={
+                handleRegister
+              }
             >
-              <FaSignInAlt />
 
-              {loading
-                ? "Logging in..."
-                : "Login"}
-            </button>
+              <label>
+                Full Name
+              </label>
 
-            <div
-              className="clear-data"
-              onClick={clearData}
-            >
-              <FaTrash />
-              <span>
-                Clear Saved Data
-              </span>
-            </div>
+              <input
+                type="text"
+                name="name"
+                value={registerData.name}
+                onChange={
+                  handleRegisterChange
+                }
+                placeholder="Enter Full Name"
+                required
+              />
 
-          </form>
-        ) : (
-          <form onSubmit={handleRegister}>
+              <label>
+                Email
+              </label>
 
-            <label>Full Name</label>
+              <input
+                type="email"
+                name="email"
+                value={registerData.email}
+                onChange={
+                  handleRegisterChange
+                }
+                placeholder="Enter Email"
+                required
+              />
 
-            <input
-              type="text"
-              name="name"
-              value={registerData.name}
-              onChange={handleRegisterChange}
-              placeholder="Enter Full Name"
-              required
-            />
+              <label>
+                Password
+              </label>
 
-            <label>Email</label>
+              <input
+                type="password"
+                name="password"
+                value={registerData.password}
+                onChange={
+                  handleRegisterChange
+                }
+                placeholder="Create Password"
+                required
+              />
 
-            <input
-              type="email"
-              name="email"
-              value={registerData.email}
-              onChange={handleRegisterChange}
-              placeholder="Enter Email"
-              required
-            />
+              <button
+                type="submit"
+                className="luxury-login-btn"
+                disabled={loading}
+              >
 
-            <label>Password</label>
+                <FaUserPlus />
 
-            <input
-              type="password"
-              name="password"
-              value={registerData.password}
-              onChange={handleRegisterChange}
-              placeholder="Create Password"
-              required
-            />
+                {
+                  loading
+                    ? "Creating..."
+                    : "Register"
+                }
 
-            <button
-              type="submit"
-              className="luxury-login-btn"
-              disabled={loading}
-            >
-              <FaUserPlus />
+              </button>
 
-              {loading
-                ? "Creating..."
-                : "Register"}
-            </button>
+            </form>
 
-          </form>
-        )}
+          )
+
+        }
+
       </div>
+
     </div>
+
   );
+
 }
 
 export default Login;
