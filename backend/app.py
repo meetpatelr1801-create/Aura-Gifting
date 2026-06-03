@@ -18,7 +18,18 @@ from flask_mail import Mail, Message
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "*"}},
+    supports_credentials=True
+)
+
+@app.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+    return response
 
 # ---------------------------------------------------
 # Mail Configuration
@@ -64,6 +75,15 @@ client = razorpay.Client(
     )
 )
 
+@app.route('/api/register', methods=['OPTIONS'])
+def register_options():
+    return jsonify({"success": True}), 200
+
+
+@app.route('/api/login', methods=['OPTIONS'])
+def login_options():
+    return jsonify({"success": True}), 200
+
 # ---------------------------------------------------
 # Home Route
 # ---------------------------------------------------
@@ -79,35 +99,46 @@ def home():
 @app.route('/api/register', methods=['POST'])
 def register():
     try:
+
         data = request.get_json()
 
-        print("REGISTER DATA:", data)
+        name = data['name']
+        email = data['email']
+        password = data['password']
 
-        name = data.get('name')
-        email = data.get('email')
-        password = data.get('password')
+        hashed_password = bcrypt.hashpw(
+            password.encode('utf-8'),
+            bcrypt.gensalt()
+        ).decode('utf-8')
 
         cursor = mysql.connection.cursor()
 
         cursor.execute(
-            "INSERT INTO users (name, email, password, role) VALUES (%s,%s,%s,%s)",
-            (name, email, password, "user")
+            """
+            INSERT INTO users
+            (name, email, password, role)
+            VALUES (%s,%s,%s,%s)
+            """,
+            (
+                name,
+                email,
+                hashed_password,
+                "user"
+            )
         )
 
         mysql.connection.commit()
-
         cursor.close()
 
         return jsonify({
-            "success": True,
             "message": "Registration Successful"
         })
 
     except Exception as e:
+
         print("REGISTER ERROR:", str(e))
 
         return jsonify({
-            "success": False,
             "error": str(e)
         }), 500
 
