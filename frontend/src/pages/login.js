@@ -158,13 +158,13 @@ function Login() {
     } catch (error) {
 
       console.error(error);
-
-      alert(
+      const msg =
         error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
-        "Registration Failed"
-      );
+        "Registration Failed";
+
+      alert(msg);
 
     } finally {
 
