@@ -78,73 +78,38 @@ def home():
 # ---------------------------------------------------
 @app.route('/api/register', methods=['POST'])
 def register():
-
     try:
-
         data = request.get_json()
 
-        name = data['name']
-        email = data['email']
-        password = data['password']
+        print("REGISTER DATA:", data)
+
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
 
         cursor = mysql.connection.cursor()
 
-        # Check Existing User
-        check_query = """
-        SELECT * FROM users
-        WHERE email = %s
-        """
-
-        cursor.execute(check_query, (email,))
-
-        existing_user = cursor.fetchone()
-
-        if existing_user:
-
-            cursor.close()
-
-            return jsonify({
-                "message": "Email Already Exists"
-            }), 400
-
-        # Hash Password
-        hashed_password = bcrypt.hashpw(
-            password.encode('utf-8'),
-            bcrypt.gensalt()
-        ).decode('utf-8')
-
-        # Insert User
-        insert_query = """
-        INSERT INTO users(
-            name,
-            email,
-            password,
-            role
+        cursor.execute(
+            "INSERT INTO users (name, email, password, role) VALUES (%s,%s,%s,%s)",
+            (name, email, password, "user")
         )
-        VALUES(%s, %s, %s, %s)
-        """
-
-        cursor.execute(insert_query, (
-            name,
-            email,
-            hashed_password,
-            "user"
-        ))
 
         mysql.connection.commit()
 
         cursor.close()
 
         return jsonify({
-            "message": "User Registered Successfully"
+            "success": True,
+            "message": "Registration Successful"
         })
 
     except Exception as e:
+        print("REGISTER ERROR:", str(e))
 
         return jsonify({
+            "success": False,
             "error": str(e)
         }), 500
-
 
 # ---------------------------------------------------
 # Login API
